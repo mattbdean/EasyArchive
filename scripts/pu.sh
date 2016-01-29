@@ -1,7 +1,6 @@
 #!/bin/bash
 
-## This script will push all files starting with "sample." in the directory of this
-## script.
+## This script will push all files starting with "sample." in $PUSH_FROM
 
 set -e
 
