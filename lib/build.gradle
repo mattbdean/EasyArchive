@@ -1,0 +1,16 @@
+apply plugin: 'kotlin'
+apply plugin: 'org.jetbrains.dokka'
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    compile 'org.apache.commons:commons-compress:1.10'
+    compile 'org.tukaani:xz:1.5'
+    compile 'com.github.junrar:junrar:0.7'
+    testCompile "junit:junit:$junitVersion"
+    testCompile "org.hamcrest:hamcrest-all:$hamcrestVersion"
+}
+
+dokka {
+    moduleName = 'EasyArchive-lib'
+    outputDirectory = "$buildDir/docs/dokka"
+}
