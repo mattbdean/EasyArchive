@@ -53,7 +53,7 @@ for method in "${!cmds[@]}"; do
     if [[ "$DEBUG" == true ]]; then
         echo "  --> $cmd"
     fi
-    eval "$cmd" 1>/dev/null
+    eval "${cmd}" 1>/dev/null
 done
 # Go back to the other directory
 cd --
