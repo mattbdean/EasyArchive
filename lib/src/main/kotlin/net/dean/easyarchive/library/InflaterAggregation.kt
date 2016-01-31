@@ -68,7 +68,12 @@ public class InflaterAggregation {
 
     /** Checks for any possible issue with the output directory */
     public fun validateDestination(dest: File): ValidationStatus {
-        if (!dest.exists()) return ValidationStatus.DEST_NONEXISTENT
+        if (!dest.exists()) {
+            val parent: File = dest.absoluteFile.parentFile
+            // Can't write to parent, therefore can't create the directory
+            if (!parent.canWrite()) return ValidationStatus.DIR_UNCREATABLE
+            return ValidationStatus.DEST_NONEXISTENT
+        }
         if (!dest.isDirectory) return ValidationStatus.DEST_NOT_DIR
         if (!dest.canWrite()) return ValidationStatus.BAD_DIR_PERMS
 
@@ -200,6 +205,8 @@ public enum class ValidationStatus(public val severity: Severity = Severity.FINE
     DEST_NOT_DIR(Severity.SEVERE),
     /** The current user does not write permissions in this directory */
     BAD_DIR_PERMS(Severity.SEVERE),
+    /** The destination does not exist and cannot be created due to lack of permission */
+    DIR_UNCREATABLE(Severity.SEVERE),
     /** All pre-checks have passed. This does not guarantee that there will be no error extracting the archive. */
     READY()
 }

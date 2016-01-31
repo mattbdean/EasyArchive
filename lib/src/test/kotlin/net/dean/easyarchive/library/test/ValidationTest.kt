@@ -28,6 +28,7 @@ public class ValidationTest(val archive: File, val destination: File, val expect
                         arrayOf(validDest, validDest, ARCHIVE_NOT_FILE),
                         arrayOf(validArchive, File("/"), BAD_DIR_PERMS),
                         // Preferably there would be a test for an unreadable file
+                        arrayOf(validArchive, File("/abc"), DIR_UNCREATABLE),
                         arrayOf(resource("sources/empty"), validDest, NO_FILE_EXTENSION)
                 )
     }
