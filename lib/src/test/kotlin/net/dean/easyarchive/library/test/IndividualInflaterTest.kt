@@ -8,6 +8,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.io.File
+import java.io.FileNotFoundException
 import java.util.*
 
 @RunWith(Parameterized::class)
@@ -34,28 +35,32 @@ public class IndividualInflaterTest(public val inflater: Inflater, public val ex
     }
 
     private fun testInflater(inflater: Inflater, ext: String) {
-        val archive = sampleFile(inflater)
-        val dest = tempDir(ext)
-        assertThat(inflater.canOperateOn(archive), `is`(true))
-        mkdirs(dest)
-        val files = inflater.inflate(archive, dest)
-        assertThat(inflater.count(archive), `is`(files.size))
-        files.forEach {
-            // inflate() only returns files, not directories
-            assert(it.isFile)
-            when (inflater) {
-                is Unarchiver -> {
-                    // Ignore META-INF files generated in jar files
-                    if (!(archive.extension == "jar" && it.parentFile.name == "META-INF"))
-                        md5Comp(resource("sources/${it.name}"), it)
+        try {
+            val archive = sampleFile(inflater)
+            val dest = tempDir(ext)
+            assertThat(inflater.canOperateOn(archive), `is`(true))
+            mkdirs(dest)
+            val files = inflater.inflate(archive, dest)
+            assertThat(inflater.count(archive), `is`(files.size))
+            files.forEach {
+                // inflate() only returns files, not directories
+                assert(it.isFile)
+                when (inflater) {
+                    is Unarchiver -> {
+                        // Ignore META-INF files generated in jar files
+                        if (!(archive.extension == "jar" && it.parentFile.name == "META-INF"))
+                            md5Comp(resource("sources/${it.name}"), it)
+                    }
+                    is Pack200Decompressor -> {
+                        // The files are the same but the MD5s do not match up because of the extra info pack200 adds
+                        // Rely on JarUnarchiver test
+                    }
+                    // Decompressor
+                    else -> md5Comp(resource("sources/pcgpe10.txt"), it)
                 }
-                is Pack200Decompressor -> {
-                    // The files are the same but the MD5s do not match up because of the extra info pack200 adds
-                    // Rely on JarUnarchiver test
-                }
-                // Decompressor
-                else -> md5Comp(resource("sources/pcgpe10.txt"), it)
             }
+        } catch (e: FileNotFoundException) {
+            println("Skipping test with inflater ${inflater.javaClass.name} because its sample file could not be found")
         }
     }
 

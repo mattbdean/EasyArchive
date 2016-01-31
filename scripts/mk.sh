@@ -3,8 +3,6 @@
 ## This script will create several archives which contain the files located
 ## in the sources/ folder.
 
-set -e
-
 DEBUG=false
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
