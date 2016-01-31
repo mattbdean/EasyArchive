@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">Easy Archive</string>
+
+    <!-- ValidationStatus -->
+    <string name="vs_ready">Ready</string>
+    <string name="vs_archive_nonexistent">That file doesn\'t exist</string>
+    <string name="vs_archive_not_file">We need a file here</string>
+    <string name="vs_bad_archive_perms">This file is read-protected</string>
+    <string name="vs_no_file_extension">This file has no extension</string>
+    <string name="vs_dest_nonexistent">This folder will be created for you</string>
+    <string name="vs_dest_not_dir">We need a folder here</string>
+    <string name="vs_bad_dir_perms">This folder is write-protected</string>
+
+    <string name="hint_input_file">/path/to/archive.zip</string>
+    <string name="hint_input_directory">/path/to/folder</string>
 </resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="FileInputView">
+        <attr name="inputMode" format="enum">
+            <enum name="file" value="0" />
+            <enum name="directory" value="1" />
+        </attr>
+    </declare-styleable>
+</resources>

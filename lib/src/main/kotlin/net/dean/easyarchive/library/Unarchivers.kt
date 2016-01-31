@@ -90,7 +90,7 @@ public abstract class GenericUnarchiver(ext: String) : AbstractUnarchiver(ext) {
 }
 
 /** Uses the `java.util.zip` to extract a given file */
-open class ZipBasedUnarchiver protected constructor(ext: String) : AbstractUnarchiver(ext) {
+public open class ZipBasedUnarchiver protected constructor(ext: String) : AbstractUnarchiver(ext) {
     override fun count(f: File): Int {
         val zip = ZipFile(f)
         val entries = zip.entries()

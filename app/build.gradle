@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: "kotlin-android"
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 23
@@ -20,10 +20,18 @@ android {
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+        androidTest.java.srcDirs += 'src/androidTest/kotlin'
+    }
+    packagingOptions {
+        for (f in ['NOTICE', 'NOTICE.txt', 'LICENSE', 'LICENSE.txt', 'DEPENDENCIES']) {
+            exclude "META-INF/$f"
+        }
     }
 }
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.pawegio.kandroid:kandroid:0.4.0@aar'
+    compile project(':lib')
 }

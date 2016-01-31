@@ -184,22 +184,28 @@ public class InflationException(reason: String, cause: Exception? = null): Excep
 /**
  * Reasons why a file or directory does not to seem to be valid. All besides [READY] are error codes.
  */
-public enum class ValidationStatus {
+public enum class ValidationStatus(public val severity: Severity = Severity.FINE) {
     /** The archive file does not exist */
-    ARCHIVE_NONEXISTENT,
+    ARCHIVE_NONEXISTENT(Severity.SEVERE),
     /** The given archive file exists but is not a file */
-    ARCHIVE_NOT_FILE,
+    ARCHIVE_NOT_FILE(Severity.SEVERE),
     /** The active user does not have read permissions to this archive */
-    BAD_ARCHIVE_PERMS,
+    BAD_ARCHIVE_PERMS(Severity.SEVERE),
     /** The archive file has no extension; it cannot be determined which [Inflater] to use */
-    NO_FILE_EXTENSION,
+    NO_FILE_EXTENSION(Severity.SEVERE),
 
     /** The destination directory does not exist */
-    DEST_NONEXISTENT,
+    DEST_NONEXISTENT(Severity.TOLERABLE),
     /** The destination is not a directory */
-    DEST_NOT_DIR,
+    DEST_NOT_DIR(Severity.SEVERE),
     /** The current user does not write permissions in this directory */
-    BAD_DIR_PERMS,
+    BAD_DIR_PERMS(Severity.SEVERE),
     /** All pre-checks have passed. This does not guarantee that there will be no error extracting the archive. */
-    READY
+    READY()
+}
+
+public enum class Severity {
+    SEVERE,
+    TOLERABLE,
+    FINE
 }
