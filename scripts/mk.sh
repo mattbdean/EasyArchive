@@ -20,16 +20,17 @@ if [ ! -d "$RESOURCES" ]; then
     mkdir "$RESOURCES"
 fi
 
-gzip_template="-kc -9 $FILE > $OUT.$FILE_EXT"
+GZIP_TEMPLATE="-c -9 $FILE > $OUT.$FILE_EXT"
+BASIC_GZIP_TEMPLATE="-k $GZIP_TEMPLATE"
 # Maximum compression for using gzip. See http://superuser.com/a/305141/285466
 GZIP="-9"
 
 declare -A cmds
 cmds["7z"]="7z a -mx9 $OUT.7z $FILES"
-cmds["bzip2"]="bzip2 $gzip_template.bz2"
-cmds["gzip"]="gzip $gzip_template.gz"
+cmds["bzip2"]="bzip2 $BASIC_GZIP_TEMPLATE.bz2"
+cmds["gzip"]="gzip $GZIP_TEMPLATE.gz"
 cmds["jar"]="jar cf $OUT.jar sources/HelloWorld.class"
-cmds["lzma"]="lzma -9 $gzip_template.lzma"
+cmds["lzma"]="lzma -9 $BASIC_GZIP_TEMPLATE.lzma"
 cmds["pack200"]="pack200 -g $OUT.pack $JAR"
 cmds["pack200/gzip"]="pack200 $OUT.pack.gz $JAR"
 cmds["rar"]="rar a -m5 $OUT.rar $FILES"
@@ -37,7 +38,7 @@ cmds["tar"]="tar cf $OUT.tar $FILES"
 cmds["tar/gzip"]="tar czf $OUT.tar.gz $FILES"
 cmds["tar/bzip2"]="tar cjf $OUT.tar.bz2 $FILES"
 cmds["tar/xz"]="tar cJf $OUT.tar.xz $FILES"
-cmds["xz"]="xz -9 $gzip_template.xz"
+cmds["xz"]="xz -9 $BASIC_GZIP_TEMPLATE.xz"
 cmds["zip"]="zip -9 -r $OUT.zip sources"
 
 echo "Removing $RESOURCES/sample.*"
