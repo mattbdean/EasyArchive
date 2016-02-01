@@ -5,7 +5,7 @@
 set -e
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PUSH_FROM="$DIR/../library/src/test/resources"
+PUSH_FROM="$DIR/../lib/src/test/resources"
 PUSH_TO=/mnt/sdcard
 
 for f in ${PUSH_FROM}/sample.*; do
