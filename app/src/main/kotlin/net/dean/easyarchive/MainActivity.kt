@@ -30,11 +30,11 @@ public class MainActivity : AppCompatActivity() {
             find<Button>(R.id.inflate).isEnabled = enabled
         }
         dependents.forEach { it.onStatusChanged = onStatusChanged }
-    }
 
-    fun unarchive(view: View) {
-        InflateTask(progress).execute(find<FileInputView>(R.id.input_file).file(),
-                find<FileInputView>(R.id.input_directory).file())
+        find<Button>(R.id.inflate).setOnClickListener {
+            InflateTask(progress).execute(find<FileInputView>(R.id.input_file).file(),
+                    find<FileInputView>(R.id.input_directory).file())
+        }
     }
 }
 
