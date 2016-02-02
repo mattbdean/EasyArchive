@@ -16,12 +16,17 @@ public class ProgressIndicatorView : RelativeLayout {
             field = value
             val progress = ((current.toFloat() / total.toFloat()) * 100).toInt()
             progressBar.progress = progress
-            updateFileCounter()
+            checkDone()
         }
     public var total = -1
         set(value) {
             field = value
-            updateFileCounter()
+            checkDone()
+        }
+    private var done = false
+        set(value) {
+            field = value
+            filename.visibility = if (done) GONE else VISIBLE
         }
     private val progressBar: ProgressBar by lazy { find<ProgressBar>(R.id.progress_bar) }
     private val filename: TextView by lazy { find<TextView>(R.id.filename) }
@@ -48,10 +53,12 @@ public class ProgressIndicatorView : RelativeLayout {
         this.current = current
     }
 
-    private fun updateFileCounter() {
-        if (current == total)
+    private fun checkDone() {
+        done = current == total
+        if (done)
             fileCounter.setText(R.string.done)
         else
             fileCounter.text = "$current/$total"
+
     }
 }
