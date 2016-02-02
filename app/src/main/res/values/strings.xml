@@ -15,4 +15,5 @@
     <string name="hint_input_file">Path to archive file</string>
     <string name="hint_input_directory">Where these files will go</string>
     <string name="unarchive">Unarchive</string>
+    <string name="done">Done</string>
 </resources>

@@ -24,12 +24,14 @@ public interface Decompressor : Inflater
  *                `CompressorInputStream` dynamically.
  */
 public abstract class AbstractDecompressor(public val ext: String, public val algo: String) : Decompressor {
+    private val size = 1
     /** Handles events for this Decompressor */
     public override var eventHandler: ArchiveEventHandler = object: ArchiveEventHandler {
         override fun handle(e: ArchiveEvent) {}
     }
 
     override fun inflate(f: File, dest: File): List<File> {
+        log(ArchiveEvent.start(f, size))
         val input = try {
             compressorStreamFactory.createCompressorInputStream(algo, newInputStream(f))
         } catch (e: CompressorException) {
@@ -40,7 +42,7 @@ public abstract class AbstractDecompressor(public val ext: String, public val al
         val output = newOutputStream(outFile)
 
         IOUtils.copy(input, output)
-        log(ArchiveEvent.inflate(outFile, 1, 1))
+        log(ArchiveEvent.inflate(outFile, size, size))
 
         input.close()
         output.close()
@@ -50,7 +52,7 @@ public abstract class AbstractDecompressor(public val ext: String, public val al
         return listOf(outFile)
     }
 
-    override fun count(f: File): Int = 1
+    override fun count(f: File): Int = size
     override fun canOperateOn(f: File): Boolean = f.name.endsWith('.' + ext, ignoreCase = true)
     override fun log(e: ArchiveEvent) {
         eventHandler.handle(e)

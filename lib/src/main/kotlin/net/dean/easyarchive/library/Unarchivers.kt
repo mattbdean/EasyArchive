@@ -34,6 +34,7 @@ public abstract class AbstractUnarchiver(public val ext: String) : Unarchiver {
     override fun canOperateOn(f: File): Boolean = f.name.endsWith('.' + ext, ignoreCase = true)
     override final fun inflate(f: File, dest: File): List<File> {
         val count = count(f)
+        log(ArchiveEvent.start(f, count))
         val files = doInflate(f, dest, count)
         log(ArchiveEvent.done(f))
         return files

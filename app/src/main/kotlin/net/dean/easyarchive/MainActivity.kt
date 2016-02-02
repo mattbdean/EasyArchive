@@ -4,31 +4,32 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import com.pawegio.kandroid.d
 import com.pawegio.kandroid.find
+import net.dean.easyarchive.library.ArchiveAction
 import net.dean.easyarchive.library.ArchiveEvent
 import net.dean.easyarchive.library.ArchiveEventHandler
 import net.dean.easyarchive.library.InflaterAggregation
 import java.io.File
 
 public class MainActivity : AppCompatActivity() {
+    private val progress: ProgressIndicatorView by lazy { find<ProgressIndicatorView>(R.id.progress_indicator) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
     }
 
     fun unarchive(view: View) {
-        InflateTask().execute(find<FileInputView>(R.id.input_file).file(),
+        InflateTask(progress).execute(find<FileInputView>(R.id.input_file).file(),
                 find<FileInputView>(R.id.input_directory).file())
     }
 }
 
-public class InflateTask : AsyncTask<File, ArchiveEvent, Unit>() {
+public class InflateTask(private val progress: ProgressIndicatorView) : AsyncTask<File, ArchiveEvent, Unit>() {
     override fun doInBackground(vararg params: File?) {
         val inflaters = InflaterAggregation()
         inflaters.eventHandler = object: ArchiveEventHandler {
             override fun handle(e: ArchiveEvent) {
-                onProgressUpdate(e)
+                publishProgress(e)
             }
         }
         if (params.size != 2)
@@ -39,6 +40,11 @@ public class InflateTask : AsyncTask<File, ArchiveEvent, Unit>() {
     }
 
     override fun onProgressUpdate(vararg values: ArchiveEvent?) {
-        d(values[0].toString())
+        val event = values[0]!!
+        if (event.action == ArchiveAction.START) {
+            progress.total = event.total
+        } else if (event.action == ArchiveAction.INFLATE) {
+            progress.update(event.file, event.current)
+        }
     }
 }

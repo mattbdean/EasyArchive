@@ -10,7 +10,8 @@ import java.io.File
  *                [ArchiveAction.INFLATE], the file that was deleted when [action] is [ArchiveAction.DELETE], or the
  *                archive being inflated otherwise
  * @property current The number of the file being processed. Will be -1 if [action] is not [ArchiveAction.INFLATE]
- * @property total The total amount of files being processed. Will be -1 if [action] is not [ArchiveAction.INFLATE]
+ * @property total The total amount of files being processed. Will be -1 if [action] is not [ArchiveAction.INFLATE] or
+ *                 [ArchiveEvent.START].
  */
 public data class ArchiveEvent private constructor(public val action: ArchiveAction,
                                public val file: File,
@@ -21,6 +22,7 @@ public data class ArchiveEvent private constructor(public val action: ArchiveAct
         @JvmStatic public fun count(f: File) = ArchiveEvent(ArchiveAction.COUNT, f)
         @JvmStatic public fun delete(f: File) = ArchiveEvent(ArchiveAction.DELETE, f)
         @JvmStatic public fun done(f: File) = ArchiveEvent(ArchiveAction.DONE, f)
+        @JvmStatic public fun start(f: File, total: Int) = ArchiveEvent(ArchiveAction.START, f, total = total)
     }
 }
 
@@ -37,6 +39,8 @@ public class DefaultArchiveEventHandler : ArchiveEventHandler {
 
 /** An enumeration of possible actions to be used in [ArchiveEvent] */
 public enum class ArchiveAction {
+    /** Represents when an Inflator has started to operate */
+    START,
     /** Represents when a file has been inflated */
     INFLATE,
     /** Represents when a file has been deleted */
