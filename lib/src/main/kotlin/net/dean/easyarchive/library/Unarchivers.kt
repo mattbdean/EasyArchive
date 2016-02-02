@@ -108,7 +108,6 @@ public open class ZipBasedUnarchiver protected constructor(ext: String) : Abstra
         val total = count(f)
 
         val files: MutableList<File> = ArrayList()
-        var current = 0
         for (it in zip.entries()) {
             val outFile = File(dest, it.name)
             mkdirs(if (it.isDirectory) outFile else outFile.parentFile)
@@ -116,8 +115,7 @@ public open class ZipBasedUnarchiver protected constructor(ext: String) : Abstra
                 out = newOutputStream(outFile)
                 IOUtils.copy(zip.getInputStream(it), out)
                 files += outFile
-                current++
-                log(ArchiveEvent(ArchiveAction.INFLATE, outFile, current, total))
+                log(ArchiveEvent(ArchiveAction.INFLATE, outFile, files.size, total))
                 out.close()
             }
         }

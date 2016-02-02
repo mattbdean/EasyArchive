@@ -125,7 +125,11 @@ public class InflaterAggregation {
                                 leftovers.add(archive)
                         }
                     }
-                    is Unarchiver -> inflated = inflateSingle(archive, dest)
+                    is Unarchiver -> {
+                        inflated = inflateSingle(archive, dest)
+                        // Stop the loop
+                        archive = File(".")
+                    }
                     else -> throw IllegalStateException("Cannot handle Inflater of type ${inflater.javaClass.name}, " +
                             "subclass of Decompressor or Unarchiver expected.")
                 }
