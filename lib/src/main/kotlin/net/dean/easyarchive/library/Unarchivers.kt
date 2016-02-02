@@ -60,7 +60,6 @@ public abstract class GenericUnarchiver(ext: String) : AbstractUnarchiver(ext) {
 
     override fun inflate(f: File, dest: File): List<File> {
         val total = count(f)
-        var current = 0
         val files: MutableList<File> = ArrayList()
 
         iterEntries(f) { entry, input ->
@@ -70,8 +69,7 @@ public abstract class GenericUnarchiver(ext: String) : AbstractUnarchiver(ext) {
                 val out = newOutputStream(outFile)
                 IOUtils.copy(input, out)
                 files += outFile
-                current++
-                log(ArchiveEvent(ArchiveAction.INFLATE, outFile, current, total))
+                log(ArchiveEvent(ArchiveAction.INFLATE, outFile, files.size, total))
                 out.close()
             }
         }
@@ -137,7 +135,6 @@ public class RarUnarchiver : AbstractUnarchiver("rar") {
         val archive = Archive(f)
         val files: MutableList<File> = ArrayList()
         val total = count(f)
-        var current = 0
         for (fh in archive.fileHeaders) {
             val outFile = File(dest, fh.fileNameString.replace('\\', '/'))
             mkdirs(if (fh.isDirectory) outFile else outFile.parentFile)
@@ -146,8 +143,7 @@ public class RarUnarchiver : AbstractUnarchiver("rar") {
                 archive.extractFile(fh, out)
                 out.close()
                 files += outFile
-                current++
-                log(ArchiveEvent(ArchiveAction.INFLATE, outFile, current, total))
+                log(ArchiveEvent(ArchiveAction.INFLATE, outFile, files.size, total))
             }
         }
 

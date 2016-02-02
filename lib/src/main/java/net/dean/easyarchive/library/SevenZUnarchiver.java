@@ -26,7 +26,6 @@ public class SevenZUnarchiver extends AbstractUnarchiver {
             OutputStream out;
 
             List<File> files = new ArrayList<>();
-            int current = 0;
             int total = count(f);
 
             SevenZArchiveEntry entry;
@@ -42,8 +41,7 @@ public class SevenZUnarchiver extends AbstractUnarchiver {
 
                     files.add(outFile);
 
-                    current++;
-                    log(new ArchiveEvent(ArchiveAction.INFLATE, outFile, current, total));
+                    log(new ArchiveEvent(ArchiveAction.INFLATE, outFile, files.size(), total));
                 }
             }
             return files;
