@@ -8,7 +8,12 @@ import android.widget.TextView
 import com.pawegio.kandroid.find
 import java.io.File
 
+/**
+ * Indicates an Inflater's progress. This view has a `ProgressBar` to show overall progress, a `TextView` to show the
+ * name of the file being inflated, and another `TextView` to show progress in terms of current and total files.
+ */
 public class ProgressIndicatorView : RelativeLayout {
+    /** Number of files that have been inflated */
     private var current = 0
         set(value) {
             if (current > total)
@@ -18,14 +23,17 @@ public class ProgressIndicatorView : RelativeLayout {
             progressBar.progress = progress
             checkDone()
         }
+    /** Total amount of files that needs to be inflated */
     public var total = -1
         set(value) {
             field = value
             checkDone()
         }
+
     private var done = false
         set(value) {
             field = value
+            // Hide filename when done
             filename.visibility = if (done) GONE else VISIBLE
         }
     private val progressBar: ProgressBar by lazy { find<ProgressBar>(R.id.progress_bar) }
@@ -40,6 +48,7 @@ public class ProgressIndicatorView : RelativeLayout {
         inflate(context, R.layout.view_progress_indicator, this)
 
         if (isInEditMode) {
+            // Default values for previewing in an IDE
             val current = 12
             val total = 154
             find<TextView>(R.id.file_counter).text = "$current/$total"
@@ -48,6 +57,12 @@ public class ProgressIndicatorView : RelativeLayout {
         }
     }
 
+    /**
+     * Updates the view with new progress
+     *
+     * @param f The file being inflated
+     * @param current How many files have been inflated so far, including this one
+     */
     public fun update(f: File, current: Int) {
         filename.text = f.absolutePath
         this.current = current
