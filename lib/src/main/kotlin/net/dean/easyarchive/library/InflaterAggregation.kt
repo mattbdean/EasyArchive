@@ -76,6 +76,7 @@ public class InflaterAggregation {
         }
         if (!dest.isDirectory) return ValidationStatus.DEST_NOT_DIR
         if (!dest.canWrite()) return ValidationStatus.BAD_DIR_PERMS
+        if (dest.listFiles().size > 0) return ValidationStatus.DIR_NOT_EMPTY
 
         return ValidationStatus.READY
     }
@@ -194,26 +195,28 @@ public class InflationException(reason: String, cause: Exception? = null): Excep
 /**
  * Reasons why a file or directory does not to seem to be valid. All besides [READY] are error codes.
  */
-public enum class ValidationStatus(public val severity: Severity = Severity.FINE) {
+public enum class ValidationStatus(public val severity: Severity = Severity.SEVERE) {
     /** The archive file does not exist */
-    ARCHIVE_NONEXISTENT(Severity.SEVERE),
+    ARCHIVE_NONEXISTENT(),
     /** The given archive file exists but is not a file */
-    ARCHIVE_NOT_FILE(Severity.SEVERE),
+    ARCHIVE_NOT_FILE(),
     /** The active user does not have read permissions to this archive */
-    BAD_ARCHIVE_PERMS(Severity.SEVERE),
+    BAD_ARCHIVE_PERMS(),
     /** The archive file has no extension; it cannot be determined which [Inflater] to use */
-    NO_FILE_EXTENSION(Severity.SEVERE),
+    NO_FILE_EXTENSION(),
 
     /** The destination directory does not exist */
     DEST_NONEXISTENT(Severity.TOLERABLE),
     /** The destination is not a directory */
-    DEST_NOT_DIR(Severity.SEVERE),
+    DEST_NOT_DIR(),
     /** The current user does not write permissions in this directory */
-    BAD_DIR_PERMS(Severity.SEVERE),
+    BAD_DIR_PERMS(),
     /** The destination does not exist and cannot be created due to lack of permission */
-    DIR_UNCREATABLE(Severity.SEVERE),
+    DIR_UNCREATABLE(),
+    /** The destination is not empty, files may be overwritten */
+    DIR_NOT_EMPTY(Severity.TOLERABLE),
     /** All pre-checks have passed. This does not guarantee that there will be no error extracting the archive. */
-    READY()
+    READY(Severity.FINE)
 }
 
 public enum class Severity {
