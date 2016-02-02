@@ -1,7 +1,11 @@
 package net.dean.easyarchive
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.pawegio.kandroid.find
@@ -24,8 +28,8 @@ public class MainActivity : AppCompatActivity() {
     }
 }
 
-public class InflateTask(private val progress: ProgressIndicatorView) : AsyncTask<File, ArchiveEvent, Unit>() {
-    override fun doInBackground(vararg params: File?) {
+public class InflateTask(private val progress: ProgressIndicatorView) : AsyncTask<File, ArchiveEvent, File>() {
+    override fun doInBackground(vararg params: File?): File {
         val inflaters = InflaterAggregation()
         inflaters.eventHandler = object: ArchiveEventHandler {
             override fun handle(e: ArchiveEvent) {
@@ -37,6 +41,7 @@ public class InflateTask(private val progress: ProgressIndicatorView) : AsyncTas
         val file = params[0]!!
         val directory = params[1]!!
         inflaters.inflate(file, directory)
+        return directory
     }
 
     override fun onProgressUpdate(vararg values: ArchiveEvent?) {
@@ -49,5 +54,19 @@ public class InflateTask(private val progress: ProgressIndicatorView) : AsyncTas
         } else if (event.action == ArchiveAction.DONE) {
             progress.visibility = View.GONE
         }
+    }
+
+    override fun onPostExecute(f: File) {
+        Snackbar.make(progress, R.string.file_extracted, Snackbar.LENGTH_LONG)
+                .setAction(R.string.show_files) {
+                    try {
+                        val path = Uri.fromFile(f)
+                        val intent = Intent(Intent.ACTION_VIEW)
+                        intent.setData(path)
+                        progress.context.startActivity(intent)
+                    } catch (e: ActivityNotFoundException) {
+                        Snackbar.make(progress, R.string.no_app, Snackbar.LENGTH_SHORT).show()
+                    }
+                }.show()
     }
 }

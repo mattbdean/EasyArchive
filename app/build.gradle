@@ -35,6 +35,7 @@ android {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:design:23.1.1'
     compile 'com.pawegio.kandroid:kandroid:0.4.0@aar'
     compile project(':lib')
 }

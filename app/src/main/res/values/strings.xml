@@ -16,4 +16,7 @@
     <string name="hint_input_directory">Where these files will go</string>
     <string name="unarchive">Unarchive</string>
     <string name="done">Done</string>
+    <string name="file_extracted">File extracted</string>
+    <string name="show_files">Show</string>
+    <string name="no_app">No installed app can view this</string>
 </resources>
