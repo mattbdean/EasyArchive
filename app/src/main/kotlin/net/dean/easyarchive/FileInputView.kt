@@ -57,7 +57,7 @@ public class FileInputView : RelativeLayout {
             }
         } else {
             find<TextView>(R.id.status).setText(R.string.vs_ready)
-            find<ImageView>(R.id.status_icon).setImageResource(R.drawable.ic_good)
+            find<ImageView>(R.id.status_icon).setImageResource(R.drawable.ic_serverity_fine)
         }
     }
 
@@ -68,7 +68,7 @@ public class FileInputView : RelativeLayout {
                 context.resources.getIdentifier("vs_${s.name.toLowerCase()}", "string", "net.dean.easyarchive")
 
     private fun iconFor(s: Severity): Int =
-            if (s == Severity.SEVERE) R.drawable.ic_bad else R.drawable.ic_good
+            if (s == Severity.SEVERE) R.drawable.ic_severity_severe else R.drawable.ic_serverity_fine
 }
 
 public enum class InputMode {
