@@ -1,4 +1,4 @@
-Easy Archive
+Easy Archive ![build status](https://travis-ci.org/thatJavaNerd/EasyArchive.svg?branch=master)
 ============
 
 EasyArchive aims to be *the* app to have for both casual and power users that just need to unzip that archive.
