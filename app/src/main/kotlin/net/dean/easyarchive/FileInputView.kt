@@ -19,7 +19,9 @@ public class FileInputView : RelativeLayout {
             status.setText(statusFor(value))
             statusIcon.setImageResource(iconFor(value.severity))
             field = value
+            onStatusChanged()
         }
+    public var onStatusChanged: () -> Unit = {}
     private var inputMode: InputMode by TardyNotNullVal()
     private val hint: Int
         get() = if (inputMode == InputMode.FILE) R.string.hint_input_file else R.string.hint_input_directory
@@ -63,6 +65,8 @@ public class FileInputView : RelativeLayout {
             find<ImageView>(R.id.status_icon).setImageResource(R.drawable.ic_serverity_fine)
         }
     }
+
+    public fun valid() = validationStatus != null && validationStatus!!.severity != Severity.SEVERE
 
     public fun file() = File(filename.text.toString())
 

@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.widget.Button
 import com.pawegio.kandroid.find
 import com.pawegio.kandroid.v
 import net.dean.easyarchive.library.ArchiveAction
@@ -21,6 +22,14 @@ public class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // Enable the inflate button if and only if all the inputs are valid
+        val dependents = listOf(find<FileInputView>(R.id.input_file), find<FileInputView>(R.id.input_directory))
+        val onStatusChanged = {
+            var enabled = dependents.filter { !it.valid() }.size == 0
+            find<Button>(R.id.inflate).isEnabled = enabled
+        }
+        dependents.forEach { it.onStatusChanged = onStatusChanged }
     }
 
     fun unarchive(view: View) {
