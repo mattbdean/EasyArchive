@@ -90,7 +90,7 @@ public class FileInputView : RelativeLayout {
 
     /** Gets a `R.drawable` resource ID for the given Severity */
     private fun iconFor(s: Severity): Int =
-            context.resources.getIdentifier("ic_severity_${s.name.toLowerCase()}", "drawable", "net.dean.easyarchive")
+            if (s == Severity.SEVERE) R.drawable.ic_severity_severe else R.drawable.ic_severity_fine
 
     /** How [FileInputView] can validate user input */
     public enum class InputMode {
