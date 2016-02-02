@@ -55,6 +55,9 @@ public class FileInputView : RelativeLayout {
                         EasyArchive.inflaters.validateDestination(f)
                 }
             }
+            whenDebug {
+                filename.setText("/mnt/sdcard/sample" + if (inputMode == InputMode.FILE) ".zip" else "")
+            }
         } else {
             find<TextView>(R.id.status).setText(R.string.vs_ready)
             find<ImageView>(R.id.status_icon).setImageResource(R.drawable.ic_serverity_fine)

@@ -24,3 +24,11 @@ public class TardyNotNullVal<T: Any>() : ReadWriteProperty<Any?, T> {
     }
 }
 
+/**
+ * Executes the given function if the app is in debug mode
+ */
+public fun whenDebug(func: () -> Unit) {
+    if (BuildConfig.DEBUG)
+        func()
+}
+

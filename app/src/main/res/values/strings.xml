@@ -14,7 +14,7 @@
 
     <string name="hint_input_file">Path to archive file</string>
     <string name="hint_input_directory">Where these files will go</string>
-    <string name="unarchive">Unarchive</string>
+    <string name="unarchive">Extract</string>
     <string name="done">Done</string>
     <string name="file_extracted">File extracted</string>
     <string name="show_files">Show</string>
