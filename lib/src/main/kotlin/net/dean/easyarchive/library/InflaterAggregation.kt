@@ -105,14 +105,14 @@ public class InflaterAggregation {
     public fun inflate(f: File, dest: File): List<File> {
         if (!hasInflaterFor(f))
             throw NoApplicableInflaterException(f)
-        var archive: File = f
+        var archive: File? = f
         var inflated: List<File> = listOf()
         // Files left over by decompressors. For example, when inflating "archive.tar.gz", this method will leave a file
         // named "archive.tar". This file is then unarchived. archive.tar is not desired and will be deleted afterwards.
         var leftovers: MutableList<File> = ArrayList()
 
         try {
-            while (hasInflaterFor(archive)) {
+            while (archive != null && hasInflaterFor(archive)) {
                 val inflater = getInflaterFor(f)
                 when (inflater) {
                     is Decompressor -> {
@@ -128,7 +128,7 @@ public class InflaterAggregation {
                     is Unarchiver -> {
                         inflated = inflateSingle(archive, dest)
                         // Stop the loop
-                        archive = File(".")
+                        archive = null
                     }
                     else -> throw IllegalStateException("Cannot handle Inflater of type ${inflater.javaClass.name}, " +
                             "subclass of Decompressor or Unarchiver expected.")
