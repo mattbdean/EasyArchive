@@ -40,10 +40,12 @@ public abstract class AbstractDecompressor(public val ext: String, public val al
         val output = newOutputStream(outFile)
 
         IOUtils.copy(input, output)
-        log(ArchiveEvent(ArchiveAction.INFLATE, outFile, 1, 1))
+        log(ArchiveEvent.inflate(outFile, 1, 1))
 
         input.close()
         output.close()
+
+        log(ArchiveEvent.done(outFile))
 
         return listOf(outFile)
     }

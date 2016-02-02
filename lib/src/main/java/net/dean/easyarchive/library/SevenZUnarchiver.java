@@ -20,13 +20,12 @@ public class SevenZUnarchiver extends AbstractUnarchiver {
 
     @NotNull
     @Override
-    public List<File> inflate(@NotNull File f, @NotNull File dest) throws InflationException {
+    public List<File> doInflate(@NotNull File f, @NotNull File dest, int total) {
         try {
             SevenZFile seven = new SevenZFile(f);
             OutputStream out;
 
             List<File> files = new ArrayList<>();
-            int total = count(f);
 
             SevenZArchiveEntry entry;
             while ((entry = seven.getNextEntry()) != null) {
@@ -41,18 +40,18 @@ public class SevenZUnarchiver extends AbstractUnarchiver {
 
                     files.add(outFile);
 
-                    log(new ArchiveEvent(ArchiveAction.INFLATE, outFile, files.size(), total));
+                    log(ArchiveEvent.inflate(outFile, files.size(), total));
                 }
             }
             return files;
         } catch (IOException e) {
-            throw new InflationException("Could not inflate archive ", e);
+            throw new RuntimeException("Could not inflate archive ", e);
         }
 
     }
 
     @Override
-    public int count(@NotNull File f) {
+    public int doCount(@NotNull File f) {
         SevenZFile seven = null;
         try {
             seven = new SevenZFile(f);

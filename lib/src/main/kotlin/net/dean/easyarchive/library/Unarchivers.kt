@@ -32,6 +32,19 @@ public abstract class AbstractUnarchiver(public val ext: String) : Unarchiver {
         eventHandler.handle(e)
     }
     override fun canOperateOn(f: File): Boolean = f.name.endsWith('.' + ext, ignoreCase = true)
+    override final fun inflate(f: File, dest: File): List<File> {
+        val count = count(f)
+        val files = doInflate(f, dest, count)
+        log(ArchiveEvent.done(f))
+        return files
+    }
+
+    override final fun count(f: File): Int {
+        log(ArchiveEvent.count(f))
+        return doCount(f)
+    }
+    protected abstract fun doInflate(f: File, dest: File, total: Int): List<File>
+    protected abstract fun doCount(f: File): Int
 }
 
 /**
@@ -58,8 +71,7 @@ public abstract class GenericUnarchiver(ext: String) : AbstractUnarchiver(ext) {
         input.close()
     }
 
-    override fun inflate(f: File, dest: File): List<File> {
-        val total = count(f)
+    override fun doInflate(f: File, dest: File, total: Int): List<File> {
         val files: MutableList<File> = ArrayList()
 
         iterEntries(f) { entry, input ->
@@ -69,7 +81,7 @@ public abstract class GenericUnarchiver(ext: String) : AbstractUnarchiver(ext) {
                 val out = newOutputStream(outFile)
                 IOUtils.copy(input, out)
                 files += outFile
-                log(ArchiveEvent(ArchiveAction.INFLATE, outFile, files.size, total))
+                log(ArchiveEvent.inflate(outFile, files.size, total))
                 out.close()
             }
         }
@@ -77,7 +89,7 @@ public abstract class GenericUnarchiver(ext: String) : AbstractUnarchiver(ext) {
         return files
     }
 
-    override fun count(f: File): Int {
+    override fun doCount(f: File): Int {
         var count = 0
         iterEntries(f) { entry, input ->
             if (!entry.isDirectory)
@@ -89,7 +101,7 @@ public abstract class GenericUnarchiver(ext: String) : AbstractUnarchiver(ext) {
 
 /** Uses the `java.util.zip` to extract a given file */
 public open class ZipBasedUnarchiver protected constructor(ext: String) : AbstractUnarchiver(ext) {
-    override fun count(f: File): Int {
+    override fun doCount(f: File): Int {
         val zip = ZipFile(f)
         val entries = zip.entries()
         var count = 0
@@ -100,10 +112,9 @@ public open class ZipBasedUnarchiver protected constructor(ext: String) : Abstra
         return count
     }
 
-    override fun inflate(f: File, dest: File): List<File> {
+    override fun doInflate(f: File, dest: File, total: Int): List<File> {
         val zip = ZipFile(f)
         var out: OutputStream
-        val total = count(f)
 
         val files: MutableList<File> = ArrayList()
         for (it in zip.entries()) {
@@ -113,7 +124,7 @@ public open class ZipBasedUnarchiver protected constructor(ext: String) : Abstra
                 out = newOutputStream(outFile)
                 IOUtils.copy(zip.getInputStream(it), out)
                 files += outFile
-                log(ArchiveEvent(ArchiveAction.INFLATE, outFile, files.size, total))
+                log(ArchiveEvent.inflate(outFile, files.size, total))
                 out.close()
             }
         }
@@ -131,10 +142,9 @@ public class TarUnarchiver : GenericUnarchiver("tar")
 
 /** Unarchives rar files */
 public class RarUnarchiver : AbstractUnarchiver("rar") {
-    override fun inflate(f: File, dest: File): List<File> {
+    override fun doInflate(f: File, dest: File, total: Int): List<File> {
         val archive = Archive(f)
         val files: MutableList<File> = ArrayList()
-        val total = count(f)
         for (fh in archive.fileHeaders) {
             val outFile = File(dest, fh.fileNameString.replace('\\', '/'))
             mkdirs(if (fh.isDirectory) outFile else outFile.parentFile)
@@ -143,12 +153,12 @@ public class RarUnarchiver : AbstractUnarchiver("rar") {
                 archive.extractFile(fh, out)
                 out.close()
                 files += outFile
-                log(ArchiveEvent(ArchiveAction.INFLATE, outFile, files.size, total))
+                log(ArchiveEvent.inflate(outFile, files.size, total))
             }
         }
 
         return files
     }
 
-    override fun count(f: File): Int = Archive(f).fileHeaders.filter { !it.isDirectory }.size
+    override fun doCount(f: File): Int = Archive(f).fileHeaders.filter { !it.isDirectory }.size
 }

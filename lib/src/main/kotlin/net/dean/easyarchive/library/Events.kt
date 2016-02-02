@@ -12,10 +12,17 @@ import java.io.File
  * @property current The number of the file being processed. Will be -1 if [action] is not [ArchiveAction.INFLATE]
  * @property total The total amount of files being processed. Will be -1 if [action] is not [ArchiveAction.INFLATE]
  */
-public data class ArchiveEvent(public val action: ArchiveAction,
+public data class ArchiveEvent private constructor(public val action: ArchiveAction,
                                public val file: File,
-                               public val current: Int,
-                               public val total: Int)
+                               public val current: Int = -1,
+                               public val total: Int = -1) {
+    companion object {
+        @JvmStatic public fun inflate(f: File, current: Int, total: Int) = ArchiveEvent(ArchiveAction.INFLATE, f, current, total)
+        @JvmStatic public fun count(f: File) = ArchiveEvent(ArchiveAction.COUNT, f)
+        @JvmStatic public fun delete(f: File) = ArchiveEvent(ArchiveAction.DELETE, f)
+        @JvmStatic public fun done(f: File) = ArchiveEvent(ArchiveAction.DONE, f)
+    }
+}
 
 /** Handles archive events */
 public interface ArchiveEventHandler {

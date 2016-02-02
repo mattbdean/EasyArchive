@@ -138,6 +138,7 @@ public class InflaterAggregation {
             throw InflationException("Could not inflate file ${f.absolutePath}", e)
         } finally {
             for (leftover in leftovers) {
+                eventHandler.handle(ArchiveEvent.delete(leftover))
                 leftover.delete()
             }
         }
