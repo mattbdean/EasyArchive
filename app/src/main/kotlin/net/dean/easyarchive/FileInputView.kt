@@ -8,13 +8,9 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.util.AttributeSet
 import android.widget.*
-import com.nononsenseapps.filepicker.AbstractFilePickerActivity
-import com.nononsenseapps.filepicker.AbstractFilePickerFragment
 import com.nononsenseapps.filepicker.FilePickerActivity
-import com.nononsenseapps.filepicker.FilePickerFragment
 import com.pawegio.kandroid.find
 import com.pawegio.kandroid.textWatcher
-import net.dean.easyarchive.library.InflaterAggregation
 import net.dean.easyarchive.library.Severity
 import net.dean.easyarchive.library.ValidationStatus
 import java.io.File
@@ -30,7 +26,6 @@ public class FileInputView : RelativeLayout {
     }
     /** Called when the ValidationStatus is changed. */
     public var onStatusChanged: () -> Unit = {}
-    public var onBrowse: () -> Unit = {}
     private var validationStatus: ValidationStatus? = null
         set(value) {
             if (value == null) throw NullPointerException("validationStatus cannot be null")
