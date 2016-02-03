@@ -18,7 +18,7 @@
             android:layout_gravity="center"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:inputType="text"/>
+            android:inputType="textNoSuggestions"/>
         <ImageButton
             android:src="@drawable/ic_file_choose"
             android:id="@+id/browse"
