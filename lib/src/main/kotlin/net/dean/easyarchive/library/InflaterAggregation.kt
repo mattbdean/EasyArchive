@@ -46,6 +46,11 @@ public class InflaterAggregation {
     }
 
     /**
+     * Checks if any Inflater in this aggregation can operate on a given file
+     */
+    public fun canOperateOn(f: File): Boolean = inflaters.find { it.canOperateOn(f) } != null
+
+    /**
      * Tests a possible archive-destination combination. A value of anything except [ValidationStatus.READY] is an
      * error.
      */

@@ -1,13 +1,20 @@
 package net.dean.easyarchive
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.os.Environment
+import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.util.AttributeSet
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.RelativeLayout
-import android.widget.TextView
+import android.widget.*
+import com.nononsenseapps.filepicker.AbstractFilePickerActivity
+import com.nononsenseapps.filepicker.AbstractFilePickerFragment
+import com.nononsenseapps.filepicker.FilePickerActivity
+import com.nononsenseapps.filepicker.FilePickerFragment
 import com.pawegio.kandroid.find
 import com.pawegio.kandroid.textWatcher
+import net.dean.easyarchive.library.InflaterAggregation
 import net.dean.easyarchive.library.Severity
 import net.dean.easyarchive.library.ValidationStatus
 import java.io.File
@@ -18,8 +25,12 @@ import java.io.File
  * `TextView` to show why the given file or directory is or is not valid.
  */
 public class FileInputView : RelativeLayout {
+    companion object {
+        private const val CODE_FILE = 0
+    }
     /** Called when the ValidationStatus is changed. */
     public var onStatusChanged: () -> Unit = {}
+    public var onBrowse: () -> Unit = {}
     private var validationStatus: ValidationStatus? = null
         set(value) {
             if (value == null) throw NullPointerException("validationStatus cannot be null")
@@ -67,6 +78,7 @@ public class FileInputView : RelativeLayout {
                         EasyArchive.inflaters.validateDestination(f)
                 }
             }
+            find<ImageButton>(R.id.browse).setOnClickListener { chooseFile() }
             // If debugging, save some time and put default values in the input
             whenDebug {
                 filename.setText("/mnt/sdcard/sample" + if (inputMode == InputMode.FILE) ".zip" else "")
@@ -83,6 +95,27 @@ public class FileInputView : RelativeLayout {
 
     /** Gets a File object whose path is the input */
     public fun file() = File(filename.text.toString())
+
+    public fun chooseFile() {
+        val fm = (context as AppCompatActivity).supportFragmentManager
+        val aux = object : Fragment() {
+            override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+                if (requestCode == CODE_FILE && resultCode == Activity.RESULT_OK) {
+                    filename.setText(data!!.data.path)
+                }
+            }
+        }
+        fm.beginTransaction().add(aux, "FRAGMENT_TAG").commit()
+        fm.executePendingTransactions()
+
+        val intent = Intent(context, ArchivePickerActivity::class.java)
+        intent.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false)
+        intent.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true)
+        intent.putExtra(FilePickerActivity.EXTRA_MODE,
+                if (inputMode == FileInputView.InputMode.FILE) FilePickerActivity.MODE_FILE else FilePickerActivity.MODE_DIR)
+        intent.putExtra(FilePickerActivity.EXTRA_START_PATH, Environment.getExternalStorageDirectory().absolutePath)
+        aux.startActivityForResult(intent, CODE_FILE)
+    }
 
     /** Gets a `R.string` resource ID for the given resource identifier */
     private fun statusFor(s: ValidationStatus): Int =
