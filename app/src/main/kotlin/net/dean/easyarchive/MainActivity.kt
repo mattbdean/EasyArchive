@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.webkit.MimeTypeMap
 import android.widget.Button
 import com.pawegio.kandroid.find
 import com.pawegio.kandroid.v
@@ -50,8 +51,8 @@ public class InflateTask(private val progress: ProgressIndicatorView) : AsyncTas
             throw IllegalArgumentException("Something other than a file and a directory was given")
         val file = params[0]!!
         val directory = params[1]!!
-        inflaters.inflate(file, directory)
-        return directory
+        val files = inflaters.inflate(file, directory)
+        return if (files.size == 1) files[0] else directory
     }
 
     override fun onProgressUpdate(vararg values: ArchiveEvent?) {
@@ -69,15 +70,19 @@ public class InflateTask(private val progress: ProgressIndicatorView) : AsyncTas
 
     override fun onPostExecute(f: File) {
         Snackbar.make(progress, R.string.file_extracted, Snackbar.LENGTH_LONG)
-                .setAction(R.string.show_files) {
-                    try {
-                        val path = Uri.fromFile(f)
-                        val intent = Intent(Intent.ACTION_VIEW)
-                        intent.setData(path)
-                        progress.context.startActivity(intent)
-                    } catch (e: ActivityNotFoundException) {
-                        Snackbar.make(progress, R.string.no_app, Snackbar.LENGTH_SHORT).show()
-                    }
-                }.show()
+                .setAction(R.string.show_files) { openFile(f) }
+                .show()
+    }
+
+    private fun openFile(f: File) {
+        val path = Uri.fromFile(f)
+        val intent = Intent(Intent.ACTION_VIEW, path)
+        val chooser = Intent.createChooser(intent, progress.context.resources.getString(R.string.intent_chooser))
+
+        if (intent.resolveActivity(progress.context.packageManager) != null) {
+            progress.context.startActivity(chooser)
+        } else {
+            Snackbar.make(progress, R.string.no_app, Snackbar.LENGTH_SHORT).show()
+        }
     }
 }

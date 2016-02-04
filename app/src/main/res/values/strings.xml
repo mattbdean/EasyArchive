@@ -20,4 +20,5 @@
     <string name="file_extracted">File extracted</string>
     <string name="show_files">Show</string>
     <string name="no_app">No installed app can view this</string>
+    <string name="intent_chooser">Open file with</string>
 </resources>
