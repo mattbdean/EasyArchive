@@ -28,9 +28,13 @@ public class FileInputView : RelativeLayout {
     public var onStatusChanged: () -> Unit = {}
     private var validationStatus: ValidationStatus? = null
         set(value) {
-            if (value == null) throw NullPointerException("validationStatus cannot be null")
-            status.setText(statusFor(value))
-            statusIcon.setImageResource(iconFor(value.severity))
+            if (value == null) {
+                status.text = ""
+                statusIcon.setImageDrawable(null)
+            } else {
+                status.setText(statusFor(value))
+                statusIcon.setImageResource(iconFor(value.severity))
+            }
             field = value
             onStatusChanged()
         }
@@ -66,11 +70,15 @@ public class FileInputView : RelativeLayout {
             // Validate the file name after the text has been changed
             filename.textWatcher {
                 afterTextChanged { text ->
-                    val f = File(text.toString())
-                    validationStatus = if (inputMode == InputMode.FILE)
-                        EasyArchive.inflaters.validateArchive(f)
-                    else
-                        EasyArchive.inflaters.validateDestination(f)
+                    if (text.isNullOrBlank()) {
+                        validationStatus = null
+                    } else {
+                        val f = File(text.toString())
+                        validationStatus = if (inputMode == InputMode.FILE)
+                            EasyArchive.inflaters.validateArchive(f)
+                        else
+                            EasyArchive.inflaters.validateDestination(f)
+                    }
                 }
             }
             find<ImageButton>(R.id.browse).setOnClickListener { chooseFile() }
@@ -119,6 +127,10 @@ public class FileInputView : RelativeLayout {
     /** Gets a `R.drawable` resource ID for the given Severity */
     private fun iconFor(s: Severity): Int =
             if (s == Severity.SEVERE) R.drawable.ic_severity_severe else R.drawable.ic_severity_fine
+
+    private fun reset() {
+
+    }
 
     /** How [FileInputView] can validate user input */
     public enum class InputMode {
