@@ -2,16 +2,17 @@
     <string name="app_name">Easy Archive</string>
 
     <!-- ValidationStatus -->
-    <string name="vs_ready">Ready</string>
     <string name="vs_archive_nonexistent">That file doesn\'t exist</string>
     <string name="vs_archive_not_file">We need a file here</string>
     <string name="vs_bad_archive_perms">This file is read-protected</string>
     <string name="vs_no_file_extension">This file has no extension</string>
     <string name="vs_dest_nonexistent">This folder will be created for you</string>
     <string name="vs_dest_not_dir">We need a folder here</string>
-    <string name="vs_dir_uncreatable">We can\'t create this folder for you</string>
+    <string name="vs_dest_name_invalid">This name is invalid</string>
     <string name="vs_bad_dir_perms">This folder is write-protected</string>
+    <string name="vs_dir_uncreatable">We can\'t create this folder for you</string>
     <string name="vs_dir_not_empty">Files may be overwritten</string>
+    <string name="vs_ready">Ready</string>
 
     <string name="hint_input_file">Path to archive file</string>
     <string name="hint_input_directory">Where these files will go</string>

@@ -33,3 +33,5 @@ public object InflationUtils {
     /** Default ArchiveStreamFactory */
     @JvmStatic val archiveStreamFactory: ArchiveStreamFactory = ArchiveStreamFactory()
 }
+
+public fun File.isValidName(): Boolean = !name.matches(Regex("^.*[^a-zA-Z0-9._-].*$"))

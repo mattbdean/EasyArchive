@@ -75,6 +75,8 @@ public class InflaterAggregation {
     public fun validateDestination(dest: File): ValidationStatus {
         if (!dest.exists()) {
             val parent: File = dest.absoluteFile.parentFile
+            // Test for illegal characters
+            if (!dest.isValidName()) return ValidationStatus.DEST_NAME_INVALID
             // Can't write to parent, therefore can't create the directory
             if (!parent.canWrite()) return ValidationStatus.DIR_UNCREATABLE
             return ValidationStatus.DEST_NONEXISTENT
@@ -214,6 +216,8 @@ public enum class ValidationStatus(public val severity: Severity = Severity.SEVE
     DEST_NONEXISTENT(Severity.TOLERABLE),
     /** The destination is not a directory */
     DEST_NOT_DIR(),
+    /** The given name of the archive contains illegal characters */
+    DEST_NAME_INVALID(),
     /** The current user does not write permissions in this directory */
     BAD_DIR_PERMS(),
     /** The destination does not exist and cannot be created due to lack of permission */
