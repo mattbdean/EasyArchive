@@ -9,6 +9,7 @@ import org.apache.commons.compress.archivers.ArchiveEntry
 import org.apache.commons.compress.archivers.ArchiveInputStream
 import org.apache.commons.compress.utils.IOUtils
 import java.io.File
+import java.io.IOException
 import java.io.OutputStream
 import java.util.*
 import java.util.zip.ZipFile
@@ -44,7 +45,9 @@ abstract class AbstractUnarchiver(val ext: String) : Unarchiver {
         log(ArchiveEvent.count(f))
         return doCount(f)
     }
+    @Throws(IOException::class)
     protected abstract fun doInflate(f: File, dest: File, total: Int): List<File>
+    @Throws(IOException::class)
     protected abstract fun doCount(f: File): Int
 }
 

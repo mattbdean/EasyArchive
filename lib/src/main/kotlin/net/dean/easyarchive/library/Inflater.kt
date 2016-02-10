@@ -20,9 +20,9 @@ interface Inflater {
      * @param dest Destination folder
      * @return A list of inflated files. Does not include directories.
      *
-     * @throws InflationException If there was a problem inflating the archive
+     * @throws IOException If there was a problem inflating the archive
      */
-    @Throws(InflationException::class)
+    @Throws(IOException::class)
     fun inflate(f: File, dest: File): List<File>
 
     /** Gets the amount of files that will be inflated when [inflate] is called. Does not include directories. */

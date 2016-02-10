@@ -20,38 +20,34 @@ public class SevenZUnarchiver extends AbstractUnarchiver {
 
     @NotNull
     @Override
-    public List<File> doInflate(@NotNull File f, @NotNull File dest, int total) {
-        try {
-            SevenZFile seven = new SevenZFile(f);
-            OutputStream out;
+    public List<File> doInflate(@NotNull File f, @NotNull File dest, int total) throws IOException {
+        SevenZFile seven = new SevenZFile(f);
+        OutputStream out;
 
-            List<File> files = new ArrayList<>();
+        List<File> files = new ArrayList<>();
 
-            SevenZArchiveEntry entry;
-            while ((entry = seven.getNextEntry()) != null) {
-                File outFile = new File(dest, entry.getName());
-                mkdirs(entry.isDirectory() ? outFile : outFile.getParentFile());
-                if (!outFile.isDirectory()) {
-                    out = newOutputStream(outFile);
-                    byte[] content = new byte[(int) entry.getSize()];
-                    seven.read(content, 0, content.length);
-                    out.write(content);
-                    out.close();
+        SevenZArchiveEntry entry;
+        while ((entry = seven.getNextEntry()) != null) {
+            File outFile = new File(dest, entry.getName());
+            mkdirs(entry.isDirectory() ? outFile : outFile.getParentFile());
+            if (!outFile.isDirectory()) {
+                out = newOutputStream(outFile);
+                byte[] content = new byte[(int) entry.getSize()];
+                seven.read(content, 0, content.length);
+                out.write(content);
+                out.close();
 
-                    files.add(outFile);
+                files.add(outFile);
 
-                    log(ArchiveEvent.inflate(outFile, files.size(), total));
-                }
+                log(ArchiveEvent.inflate(outFile, files.size(), total));
             }
-            return files;
-        } catch (IOException e) {
-            throw new RuntimeException("Could not inflate archive ", e);
         }
+        return files;
 
     }
 
     @Override
-    public int doCount(@NotNull File f) {
+    public int doCount(@NotNull File f) throws IOException {
         SevenZFile seven = null;
         try {
             seven = new SevenZFile(f);
@@ -63,15 +59,9 @@ public class SevenZUnarchiver extends AbstractUnarchiver {
                 }
             }
             return total;
-        } catch (IOException e) {
-            throw new RuntimeException("Uncaught exception while counting archive", e);
         } finally {
             if (seven != null)
-                try {
-                    seven.close();
-                } catch (Exception e) {
-                    throw new RuntimeException("Error closing input file", e);
-                }
+                seven.close();
         }
     }
 }

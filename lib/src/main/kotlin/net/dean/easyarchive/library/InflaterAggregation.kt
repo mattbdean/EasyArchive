@@ -110,7 +110,8 @@ class InflaterAggregation {
      *
      * @see inflateSingle
      */
-    @Throws(InflationException::class) fun inflate(f: File, dest: File): List<File> {
+    @Throws(InflationException::class)
+    fun inflate(f: File, dest: File): List<File> {
         if (!hasInflaterFor(f))
             throw NoApplicableInflaterException(f)
         var archive: File? = f
@@ -160,7 +161,8 @@ class InflaterAggregation {
      *
      * @throws NoApplicableInflaterException
      */
-    @Throws(NoApplicableInflaterException::class) fun inflateSingle(f: File, dest: File): List<File> {
+    @Throws(NoApplicableInflaterException::class, InflationException::class)
+    fun inflateSingle(f: File, dest: File): List<File> {
         validateWithException(f, dest)
         return getInflaterFor(f).inflate(f, dest)
     }
