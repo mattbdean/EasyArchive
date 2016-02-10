@@ -14,7 +14,7 @@ import net.dean.easyarchive.library.InflationUtils.newOutputStream
  * Decompressors are Inflaters that decompresses a single stream of data. gzip, bzip2, xz, lzma, Pack200, DEFLATE, and Z
  * are examples of compressor formats.
  */
-public interface Decompressor : Inflater
+interface Decompressor : Inflater
 
 /**
  * Generic Decompressor implementation. Fills in some boilerplate that every Decompressor can use.
@@ -23,10 +23,10 @@ public interface Decompressor : Inflater
  * @property algo A String constant in Commons Compress' `CompressorStreamFactory`. Used to create a
  *                `CompressorInputStream` dynamically.
  */
-public abstract class AbstractDecompressor(public val ext: String, public val algo: String) : Decompressor {
+abstract class AbstractDecompressor(val ext: String, val algo: String) : Decompressor {
     private val size = 1
     /** Handles events for this Decompressor */
-    public override var eventHandler: ArchiveEventHandler = object: ArchiveEventHandler {
+    override var eventHandler: ArchiveEventHandler = object: ArchiveEventHandler {
         override fun handle(e: ArchiveEvent) {}
     }
 
@@ -66,16 +66,16 @@ public abstract class AbstractDecompressor(public val ext: String, public val al
 }
 
 /** Decompresses bz2 files */
-public class Bzip2Decompressor : AbstractDecompressor("bz2", CompressorStreamFactory.BZIP2)
+class Bzip2Decompressor : AbstractDecompressor("bz2", CompressorStreamFactory.BZIP2)
 /** Decompresses gz files */
-public class GzipDecompressor : AbstractDecompressor("gz", CompressorStreamFactory.GZIP)
+class GzipDecompressor : AbstractDecompressor("gz", CompressorStreamFactory.GZIP)
 /** Decompresses lzma files */
-public class LzmaDecompressor : AbstractDecompressor("lzma", CompressorStreamFactory.LZMA)
+class LzmaDecompressor : AbstractDecompressor("lzma", CompressorStreamFactory.LZMA)
 /** Decompresses pack files into jar files */
-public class Pack200Decompressor : AbstractDecompressor("pack", CompressorStreamFactory.PACK200) {
+class Pack200Decompressor : AbstractDecompressor("pack", CompressorStreamFactory.PACK200) {
     override fun getNameFor(f: File): String = super.getNameFor(f) + ".jar"
 }
 
 /** Decompresses xz files */
-public class XzDecompressor : AbstractDecompressor("xz", CompressorStreamFactory.XZ)
+class XzDecompressor : AbstractDecompressor("xz", CompressorStreamFactory.XZ)
 

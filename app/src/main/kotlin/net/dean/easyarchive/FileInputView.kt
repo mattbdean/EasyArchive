@@ -20,12 +20,12 @@ import java.io.File
  * `Button` that shows a file picker, an `ImageView` that shows an icon related to the file's validation status, and a
  * `TextView` to show why the given file or directory is or is not valid.
  */
-public class FileInputView : RelativeLayout {
+class FileInputView : RelativeLayout {
     companion object {
         private const val CODE_FILE = 0
     }
     /** Called when the ValidationStatus is changed. */
-    public var onStatusChanged: () -> Unit = {}
+    var onStatusChanged: () -> Unit = {}
     private var validationStatus: ValidationStatus? = null
         set(value) {
             if (value == null) {
@@ -94,12 +94,12 @@ public class FileInputView : RelativeLayout {
     }
 
     /** Returns true if the ValidationStatus' severity is anything but `SEVERE` */
-    public fun valid() = validationStatus != null && validationStatus!!.severity != Severity.SEVERE
+    fun valid() = validationStatus != null && validationStatus!!.severity != Severity.SEVERE
 
     /** Gets a File object whose path is the input */
-    public fun file() = File(filename.text.toString())
+    fun file() = File(filename.text.toString())
 
-    public fun chooseFile() {
+    fun chooseFile() {
         val fm = (context as AppCompatActivity).supportFragmentManager
         val aux = object : Fragment() {
             override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -133,7 +133,7 @@ public class FileInputView : RelativeLayout {
     }
 
     /** How [FileInputView] can validate user input */
-    public enum class InputMode {
+    enum class InputMode {
         FILE,
         DIRECTORY
     }

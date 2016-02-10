@@ -17,15 +17,15 @@ import java.util.zip.ZipFile
  * Unarchivers are Inflaters that unarchive multiple entries from a single file. 7z, ar, arj, cpio, dump, tar, and zip
  * are examples of archiver formats
  */
-public interface Unarchiver : Inflater
+interface Unarchiver : Inflater
 
 /**
  * Fills in some boilerplate code that all Unarchivers use
  *
  * @property ext The file extension this Unarchiver can operate on
  */
-public abstract class AbstractUnarchiver(public val ext: String) : Unarchiver {
-    public override var eventHandler: ArchiveEventHandler = object: ArchiveEventHandler {
+abstract class AbstractUnarchiver(val ext: String) : Unarchiver {
+    override var eventHandler: ArchiveEventHandler = object: ArchiveEventHandler {
         override fun handle(e: ArchiveEvent) {}
     }
     override fun log(e: ArchiveEvent) {
@@ -51,7 +51,7 @@ public abstract class AbstractUnarchiver(public val ext: String) : Unarchiver {
 /**
  * Uses generic `ArchiveInputStream`s to unarchive a file.
  */
-public abstract class GenericUnarchiver(ext: String) : AbstractUnarchiver(ext) {
+abstract class GenericUnarchiver(ext: String) : AbstractUnarchiver(ext) {
     /** Gets an ArchiveInputStream for the given file using [ext] */
     protected fun getArchiveInputStream(f: File): ArchiveInputStream =
             archiveStreamFactory.createArchiveInputStream(ext, newInputStream(f))
@@ -101,7 +101,7 @@ public abstract class GenericUnarchiver(ext: String) : AbstractUnarchiver(ext) {
 }
 
 /** Uses the `java.util.zip` to extract a given file */
-public open class ZipBasedUnarchiver protected constructor(ext: String) : AbstractUnarchiver(ext) {
+open class ZipBasedUnarchiver protected constructor(ext: String) : AbstractUnarchiver(ext) {
     override fun doCount(f: File): Int {
         val zip = ZipFile(f)
         val entries = zip.entries()
@@ -135,14 +135,14 @@ public open class ZipBasedUnarchiver protected constructor(ext: String) : Abstra
 }
 
 /** Unarchives zip files */
-public class ZipUnarchiver : ZipBasedUnarchiver("zip")
+class ZipUnarchiver : ZipBasedUnarchiver("zip")
 /** Unarchives jar files */
-public class JarUnarchiver : ZipBasedUnarchiver("jar")
+class JarUnarchiver : ZipBasedUnarchiver("jar")
 /** Unarchives tar files */
-public class TarUnarchiver : GenericUnarchiver("tar")
+class TarUnarchiver : GenericUnarchiver("tar")
 
 /** Unarchives rar files */
-public class RarUnarchiver : AbstractUnarchiver("rar") {
+class RarUnarchiver : AbstractUnarchiver("rar") {
     override fun doInflate(f: File, dest: File, total: Int): List<File> {
         val archive = Archive(f)
         val files: MutableList<File> = ArrayList()

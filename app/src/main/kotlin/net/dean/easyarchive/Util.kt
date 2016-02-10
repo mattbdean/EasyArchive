@@ -8,15 +8,15 @@ import kotlin.reflect.KProperty
  * delegate is most useful when used with `onCreate` or similar methods. This delegate does not allow null values or
  * reassignment.
  */
-public class TardyNotNullVal<T: Any>() : ReadWriteProperty<Any?, T> {
+class TardyNotNullVal<T: Any>() : ReadWriteProperty<Any?, T> {
     private var value: T? = null
     private var set = false
 
-    public override fun getValue(thisRef: Any?, property: KProperty<*>): T {
+    override fun getValue(thisRef: Any?, property: KProperty<*>): T {
         return value ?: throw IllegalStateException("Property ${property.name} should be initialized before get.")
     }
 
-    public override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
+    override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
         if (set)
             throw IllegalStateException("Property ${property.name} has already been set.")
         this.value = value
@@ -27,7 +27,7 @@ public class TardyNotNullVal<T: Any>() : ReadWriteProperty<Any?, T> {
 /**
  * Executes the given function if the app is in debug mode
  */
-public fun whenDebug(func: () -> Unit) {
+fun whenDebug(func: () -> Unit) {
     if (BuildConfig.DEBUG)
         func()
 }

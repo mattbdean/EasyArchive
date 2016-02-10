@@ -7,9 +7,9 @@ import java.io.*
 /**
  * Collection of utility constants/methods
  */
-public object InflationUtils {
+object InflationUtils {
     /** Most efficient size in bytes for a buffer. See [here](http://stackoverflow.com/a/11221907/1275092) for more. */
-    public const val BUFFER_SIZE = 32768
+    const val BUFFER_SIZE = 32768
 
     /** Creates a new buffered file output stream */
     @JvmStatic fun newOutputStream(f: File): OutputStream = BufferedOutputStream(f.outputStream(), BUFFER_SIZE)
@@ -34,4 +34,4 @@ public object InflationUtils {
     @JvmStatic val archiveStreamFactory: ArchiveStreamFactory = ArchiveStreamFactory()
 }
 
-public fun File.isValidName(): Boolean = !name.matches(Regex("^.*[^a-zA-Z0-9._-].*$"))
+fun File.isValidName(): Boolean = !name.matches(Regex("^.*[^a-zA-Z0-9._-].*$"))

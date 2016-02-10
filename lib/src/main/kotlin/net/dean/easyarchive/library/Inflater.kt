@@ -6,12 +6,12 @@ import java.io.*
  * An Inflater takes a file and expands it, whether that be by decompressing it, unarchiving it, or both. Inflaters do
  * no pre-inflate validation. For this reason it is recommended to use [InflaterAggregation].
  */
-public interface Inflater {
+interface Inflater {
     /** Checks to see if this inflater can inflate the given file based on its name */
     fun canOperateOn(f: File): Boolean
 
     /** Handles the events that come out of this Inflater */
-    public var eventHandler: ArchiveEventHandler
+    var eventHandler: ArchiveEventHandler
 
     /**
      * Inflates a given file to the destination folder

@@ -12,7 +12,7 @@ import java.io.File
  * Indicates an Inflater's progress. This view has a `ProgressBar` to show overall progress, a `TextView` to show the
  * name of the file being inflated, and another `TextView` to show progress in terms of current and total files.
  */
-public class ProgressIndicatorView : RelativeLayout {
+class ProgressIndicatorView : RelativeLayout {
     /** Number of files that have been inflated */
     private var current = 0
         set(value) {
@@ -24,7 +24,7 @@ public class ProgressIndicatorView : RelativeLayout {
             checkDone()
         }
     /** Total amount of files that needs to be inflated */
-    public var total = -1
+    var total = -1
         set(value) {
             field = value
             checkDone()
@@ -63,7 +63,7 @@ public class ProgressIndicatorView : RelativeLayout {
      * @param f The file being inflated
      * @param current How many files have been inflated so far, including this one
      */
-    public fun update(f: File, current: Int) {
+    fun update(f: File, current: Int) {
         filename.text = f.absolutePath
         this.current = current
     }

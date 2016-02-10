@@ -13,32 +13,32 @@ import java.io.File
  * @property total The total amount of files being processed. Will be -1 if [action] is not [ArchiveAction.INFLATE] or
  *                 [ArchiveEvent.START].
  */
-public data class ArchiveEvent private constructor(public val action: ArchiveAction,
-                               public val file: File,
-                               public val current: Int = -1,
-                               public val total: Int = -1) {
+data class ArchiveEvent private constructor(val action: ArchiveAction,
+                               val file: File,
+                               val current: Int = -1,
+                               val total: Int = -1) {
     companion object {
-        @JvmStatic public fun inflate(f: File, current: Int, total: Int) = ArchiveEvent(ArchiveAction.INFLATE, f, current, total)
-        @JvmStatic public fun count(f: File) = ArchiveEvent(ArchiveAction.COUNT, f)
-        @JvmStatic public fun delete(f: File) = ArchiveEvent(ArchiveAction.DELETE, f)
-        @JvmStatic public fun done(f: File) = ArchiveEvent(ArchiveAction.DONE, f)
-        @JvmStatic public fun start(f: File, total: Int) = ArchiveEvent(ArchiveAction.START, f, total = total)
+        @JvmStatic fun inflate(f: File, current: Int, total: Int) = ArchiveEvent(ArchiveAction.INFLATE, f, current, total)
+        @JvmStatic fun count(f: File) = ArchiveEvent(ArchiveAction.COUNT, f)
+        @JvmStatic fun delete(f: File) = ArchiveEvent(ArchiveAction.DELETE, f)
+        @JvmStatic fun done(f: File) = ArchiveEvent(ArchiveAction.DONE, f)
+        @JvmStatic fun start(f: File, total: Int) = ArchiveEvent(ArchiveAction.START, f, total = total)
     }
 }
 
 /** Handles archive events */
-public interface ArchiveEventHandler {
+interface ArchiveEventHandler {
     /** Does something with the given event */
     fun handle(e: ArchiveEvent)
 }
 
 /** Ignores all events */
-public class DefaultArchiveEventHandler : ArchiveEventHandler {
+class DefaultArchiveEventHandler : ArchiveEventHandler {
     override fun handle(e: ArchiveEvent) {}
 }
 
 /** An enumeration of possible actions to be used in [ArchiveEvent] */
-public enum class ArchiveAction {
+enum class ArchiveAction {
     /** Represents when an Inflator has started to operate */
     START,
     /** Represents when a file has been inflated */

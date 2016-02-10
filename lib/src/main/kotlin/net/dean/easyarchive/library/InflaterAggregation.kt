@@ -16,9 +16,9 @@ import java.util.*
  * check for common errors, such as the archive not existing or inadequate filesystem permissions. To inflate a file,
  * use [inflate] or [inflateSingle].
  */
-public class InflaterAggregation {
+class InflaterAggregation {
     /** A list of all the Inflaters */
-    public val inflaters: List<Inflater> = listOf(
+    val inflaters: List<Inflater> = listOf(
             // Unarchivers
             ZipUnarchiver(),
             JarUnarchiver(),
@@ -34,7 +34,7 @@ public class InflaterAggregation {
     )
 
     /** Handles all ArchiveEvents. When set, sets each Inflater's event handler in [inflaters] */
-    public var eventHandler: ArchiveEventHandler = DefaultArchiveEventHandler()
+    var eventHandler: ArchiveEventHandler = DefaultArchiveEventHandler()
 
     init {
         for (inf in inflaters)
@@ -48,13 +48,13 @@ public class InflaterAggregation {
     /**
      * Checks if any Inflater in this aggregation can operate on a given file
      */
-    public fun canOperateOn(f: File): Boolean = inflaters.find { it.canOperateOn(f) } != null
+    fun canOperateOn(f: File): Boolean = inflaters.find { it.canOperateOn(f) } != null
 
     /**
      * Tests a possible archive-destination combination. A value of anything except [ValidationStatus.READY] is an
      * error.
      */
-    public fun validate(f: File, dest: File): ValidationStatus {
+    fun validate(f: File, dest: File): ValidationStatus {
         val archiveStatus = validateArchive(f)
         return if (archiveStatus == ValidationStatus.READY) validateDestination(dest) else archiveStatus
     }
@@ -63,7 +63,7 @@ public class InflaterAggregation {
      * Checks for any possible error before attempting to extract an archive. A value of anything except
      * [ValidationStatus.READY] is an error.
      */
-    public fun validateArchive(f: File): ValidationStatus {
+    fun validateArchive(f: File): ValidationStatus {
         if (!f.exists()) return ValidationStatus.ARCHIVE_NONEXISTENT
         if (!f.isFile) return ValidationStatus.ARCHIVE_NOT_FILE
         if (!f.canRead()) return ValidationStatus.BAD_ARCHIVE_PERMS
@@ -72,7 +72,7 @@ public class InflaterAggregation {
     }
 
     /** Checks for any possible issue with the output directory */
-    public fun validateDestination(dest: File): ValidationStatus {
+    fun validateDestination(dest: File): ValidationStatus {
         if (!dest.exists()) {
             val parent: File = dest.absoluteFile.parentFile
             // Test for illegal characters
@@ -109,8 +109,7 @@ public class InflaterAggregation {
      *
      * @see inflateSingle
      */
-    @Throws(InflationException::class)
-    public fun inflate(f: File, dest: File): List<File> {
+    @Throws(InflationException::class) fun inflate(f: File, dest: File): List<File> {
         if (!hasInflaterFor(f))
             throw NoApplicableInflaterException(f)
         var archive: File? = f
@@ -160,8 +159,7 @@ public class InflaterAggregation {
      *
      * @throws NoApplicableInflaterException
      */
-    @Throws(NoApplicableInflaterException::class)
-    public fun inflateSingle(f: File, dest: File): List<File> {
+    @Throws(NoApplicableInflaterException::class) fun inflateSingle(f: File, dest: File): List<File> {
         validateWithException(f, dest)
         return getInflaterFor(f).inflate(f, dest)
     }
@@ -171,8 +169,7 @@ public class InflaterAggregation {
      *
      * @throws NoApplicableInflaterException
      */
-    @Throws(NoApplicableInflaterException::class)
-    public fun count(f: File): Int {
+    @Throws(NoApplicableInflaterException::class) fun count(f: File): Int {
         validateWithException(f)
         return getInflaterFor(f).count(f)
     }
@@ -192,17 +189,17 @@ public class InflaterAggregation {
 /**
  * Thrown when attempting to get an [Inflater] for a file for which this library does not know how to handle
  */
-public class NoApplicableInflaterException(f: File) : Exception("No applicable extractor for file '${f.absolutePath}'")
+class NoApplicableInflaterException(f: File) : Exception("No applicable extractor for file '${f.absolutePath}'")
 
 /**
  * Thrown when there is an error inflating an archive
  */
-public class InflationException(reason: String, cause: Exception? = null): Exception(reason, cause)
+class InflationException(reason: String, cause: Exception? = null): Exception(reason, cause)
 
 /**
  * Reasons why a file or directory does not to seem to be valid. All besides [READY] are error codes.
  */
-public enum class ValidationStatus(public val severity: Severity = Severity.SEVERE) {
+enum class ValidationStatus(val severity: Severity = Severity.SEVERE) {
     /** The archive file does not exist */
     ARCHIVE_NONEXISTENT(),
     /** The given archive file exists but is not a file */
@@ -228,7 +225,7 @@ public enum class ValidationStatus(public val severity: Severity = Severity.SEVE
     READY(Severity.FINE)
 }
 
-public enum class Severity {
+enum class Severity {
     SEVERE,
     TOLERABLE,
     FINE
