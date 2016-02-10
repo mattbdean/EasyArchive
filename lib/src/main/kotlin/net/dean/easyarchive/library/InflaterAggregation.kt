@@ -68,6 +68,7 @@ class InflaterAggregation {
         if (!f.isFile) return ValidationStatus.ARCHIVE_NOT_FILE
         if (!f.canRead()) return ValidationStatus.BAD_ARCHIVE_PERMS
         if (!f.name.contains('.')) return ValidationStatus.NO_FILE_EXTENSION
+        if (!canOperateOn(f)) return ValidationStatus.ARCHIVE_UNRECOGNIZABLE
         return ValidationStatus.READY
     }
 
@@ -208,6 +209,8 @@ enum class ValidationStatus(val severity: Severity = Severity.SEVERE) {
     BAD_ARCHIVE_PERMS(),
     /** The archive file has no extension; it cannot be determined which [Inflater] to use */
     NO_FILE_EXTENSION(),
+    /** No inflater could be found for this archive */
+    ARCHIVE_UNRECOGNIZABLE(),
 
     /** The destination directory does not exist */
     DEST_NONEXISTENT(Severity.TOLERABLE),
