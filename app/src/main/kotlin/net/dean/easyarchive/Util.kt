@@ -1,5 +1,6 @@
 package net.dean.easyarchive
 
+import android.content.Context
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -31,4 +32,7 @@ fun whenDebug(func: () -> Unit) {
     if (BuildConfig.DEBUG)
         func()
 }
+
+fun Context.string(id: Int): String = resources.getString(id)
+fun Context.id(id: String, type: String): Int = resources.getIdentifier(id, type, packageName)
 

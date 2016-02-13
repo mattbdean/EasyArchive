@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Environment
+import android.support.design.widget.TextInputLayout
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.util.AttributeSet
@@ -29,24 +30,31 @@ class FileInputView : RelativeLayout {
     private var validationStatus: ValidationStatus? = null
         set(value) {
             if (value == null) {
-                status.text = ""
-                statusIcon.setImageDrawable(null)
+                filenameWrapper.isErrorEnabled = hasBeenEdited
+                filenameWrapper.error = if (hasBeenEdited) statusFor(ValidationStatus.ARCHIVE_NONEXISTENT) else ""
             } else {
-                status.setText(statusFor(value))
-                statusIcon.setImageResource(iconFor(value.severity))
+                val err = isError(value.severity)
+                filenameWrapper.isErrorEnabled = err
+                if (err) {
+                    val errString = statusFor(value)
+                    if (!errString.equals(filenameWrapper.error))
+                        filenameWrapper.error = errString
+                }
             }
             field = value
             onStatusChanged()
         }
     // Assigned in initialize()
     private var inputMode: InputMode by TardyNotNullVal()
+    private var hasBeenEdited = false
     /** EditText hint */
     private val hint: Int
         get() = if (inputMode == InputMode.FILE) R.string.hint_input_file else R.string.hint_input_directory
+    private val sampleInput: String
+        get() = "/mnt/sdcard/sample" + if (inputMode == InputMode.FILE) ".zip" else ""
 
     private val filename: EditText by lazy { find<EditText>(R.id.filename) }
-    private val status: TextView by lazy { find<TextView>(R.id.status) }
-    private val statusIcon: ImageView by lazy { find<ImageView>(R.id.status_icon) }
+    private val filenameWrapper: TextInputLayout by lazy { find<TextInputLayout>(R.id.filename_wrapper) }
 
     constructor(context: Context) : super(context) {
         inputMode = InputMode.FILE
@@ -65,7 +73,8 @@ class FileInputView : RelativeLayout {
 
         inflate(context, R.layout.view_file_input, this)
 
-        filename.setHint(hint)
+        filenameWrapper.hint = resources.getString(hint)
+
         if (!isInEditMode) {
             // Validate the file name after the text has been changed
             filename.textWatcher {
@@ -79,17 +88,18 @@ class FileInputView : RelativeLayout {
                         else
                             EasyArchive.inflaters.validateDestination(f)
                     }
+                    hasBeenEdited = true
                 }
             }
             find<ImageButton>(R.id.browse).setOnClickListener { chooseFile() }
             // If debugging, save some time and put default values in the input
             whenDebug {
-                filename.setText("/mnt/sdcard/sample" + if (inputMode == InputMode.FILE) ".zip" else "")
+                filename.setText(sampleInput)
             }
         } else {
             // Developer mode preview
-            find<TextView>(R.id.status).setText(R.string.vs_ready)
-            find<ImageView>(R.id.status_icon).setImageResource(R.drawable.ic_severity_fine)
+            find<TextInputLayout>(R.id.filename_wrapper).isErrorEnabled = false
+            find<EditText>(R.id.filename).setText(sampleInput)
         }
     }
 
@@ -99,7 +109,7 @@ class FileInputView : RelativeLayout {
     /** Gets a File object whose path is the input */
     fun file() = File(filename.text.toString())
 
-    fun chooseFile() {
+    private fun chooseFile() {
         val fm = (context as AppCompatActivity).supportFragmentManager
         val aux = object : Fragment() {
             override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -121,16 +131,11 @@ class FileInputView : RelativeLayout {
     }
 
     /** Gets a `R.string` resource ID for the given resource identifier */
-    private fun statusFor(s: ValidationStatus): Int =
-            context.resources.getIdentifier("vs_${s.name.toLowerCase()}", "string", "net.dean.easyarchive")
+    private fun statusFor(s: ValidationStatus): String =
+            context.string(context.id("vs_${s.name.toLowerCase()}", "string"))
 
     /** Gets a `R.drawable` resource ID for the given Severity */
-    private fun iconFor(s: Severity): Int =
-            if (s == Severity.SEVERE) R.drawable.ic_severity_severe else R.drawable.ic_severity_fine
-
-    private fun reset() {
-
-    }
+    private fun isError(s: Severity): Boolean = s == Severity.SEVERE
 
     /** How [FileInputView] can validate user input */
     enum class InputMode {
