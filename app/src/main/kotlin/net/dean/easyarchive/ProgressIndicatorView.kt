@@ -10,6 +10,7 @@ import com.pawegio.kandroid.i
 import net.dean.easyarchive.library.ArchiveAction
 import net.dean.easyarchive.library.ArchiveEvent
 import java.io.File
+import kotlin.properties.Delegates
 
 /**
  * Indicates an Inflater's progress. This view has a `ProgressBar` to show overall progress, a `TextView` to show the
@@ -39,6 +40,7 @@ class ProgressIndicatorView : RelativeLayout {
             // Hide filename when done
             filename.visibility = if (finished) GONE else VISIBLE
         }
+    private var dir: File by Delegates.notNull()
     private val progressBar: ProgressBar by lazy { find<ProgressBar>(R.id.progress_bar) }
     private val filename: TextView by lazy { find<TextView>(R.id.filename) }
     private val fileCounter: TextView by lazy { find<TextView>(R.id.file_counter) }
@@ -78,9 +80,11 @@ class ProgressIndicatorView : RelativeLayout {
             ArchiveAction.START -> {
                 total = event.total
                 progressBar.isIndeterminate = false
+                dir = event.file
             }
             ArchiveAction.INFLATE -> {
-                filename.text = event.file.absolutePath
+                val path = pathFor(event.file)
+                filename.text = pathFor(event.file)
                 this.current = event.current
             }
             ArchiveAction.DONE -> {
@@ -99,4 +103,7 @@ class ProgressIndicatorView : RelativeLayout {
             fileCounter.text = "$current/$total"
 
     }
+
+    private fun pathFor(file: File): String =
+            file.canonicalPath.substring(1 + dir.canonicalPath.length)
 }

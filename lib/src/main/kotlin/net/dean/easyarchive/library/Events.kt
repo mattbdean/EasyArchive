@@ -7,8 +7,9 @@ import java.io.File
  *
  * @property action The action occurring
  * @property file The relevant file. Will be the file that was just extracted/decompressed when [action] is
- *                [ArchiveAction.INFLATE], the file that was deleted when [action] is [ArchiveAction.DELETE], or the
- *                archive being inflated otherwise
+ *                [ArchiveAction.INFLATE], the file that was deleted when [action] is [ArchiveAction.DELETE], the
+ *                directory where the file will be inflated when [action] is [ArchiveAction.START], or the archive being
+ *                inflated otherwise
  * @property current The number of the file being processed. Will be -1 if [action] is not [ArchiveAction.INFLATE]
  * @property total The total amount of files being processed. Will be -1 if [action] is not [ArchiveAction.INFLATE] or
  *                 [ArchiveEvent.START].
@@ -22,7 +23,7 @@ data class ArchiveEvent private constructor(val action: ArchiveAction,
         @JvmStatic fun count(f: File) = ArchiveEvent(ArchiveAction.COUNT, f)
         @JvmStatic fun delete(f: File) = ArchiveEvent(ArchiveAction.DELETE, f)
         @JvmStatic fun done(f: File) = ArchiveEvent(ArchiveAction.DONE, f)
-        @JvmStatic fun start(f: File, total: Int) = ArchiveEvent(ArchiveAction.START, f, total = total)
+        @JvmStatic fun start(dir: File, total: Int) = ArchiveEvent(ArchiveAction.START, dir, total = total)
     }
 }
 

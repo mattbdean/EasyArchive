@@ -31,7 +31,7 @@ abstract class AbstractDecompressor(val ext: String, val algo: String) : Decompr
     }
 
     override fun inflate(f: File, dest: File): List<File> {
-        log(ArchiveEvent.start(f, size))
+        log(ArchiveEvent.start(dest, size))
         val input = try {
             compressorStreamFactory.createCompressorInputStream(algo, newInputStream(f))
         } catch (e: CompressorException) {
