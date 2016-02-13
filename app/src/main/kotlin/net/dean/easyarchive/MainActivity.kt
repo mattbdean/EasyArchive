@@ -55,15 +55,7 @@ class InflateTask(private val progress: ProgressIndicatorView) : AsyncTask<File,
 
     override fun onProgressUpdate(vararg values: ArchiveEvent?) {
         val event = values[0]!!
-        v(event.toString())
-        if (event.action == ArchiveAction.START) {
-            progress.visibility = View.VISIBLE
-            progress.total = event.total
-        } else if (event.action == ArchiveAction.INFLATE) {
-            progress.update(event.file, event.current)
-        } else if (event.action == ArchiveAction.DONE) {
-            progress.visibility = View.GONE
-        }
+        progress.postUpdate(event)
     }
 
     override fun onPostExecute(f: File) {

@@ -6,6 +6,9 @@ import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.pawegio.kandroid.find
+import com.pawegio.kandroid.i
+import net.dean.easyarchive.library.ArchiveAction
+import net.dean.easyarchive.library.ArchiveEvent
 import java.io.File
 
 /**
@@ -63,9 +66,21 @@ class ProgressIndicatorView : RelativeLayout {
      * @param f The file being inflated
      * @param current How many files have been inflated so far, including this one
      */
-    fun update(f: File, current: Int) {
-        filename.text = f.absolutePath
-        this.current = current
+    fun postUpdate(event: ArchiveEvent) {
+        when (event.action) {
+            ArchiveAction.INFLATE -> {
+                filename.text = event.file.absolutePath
+                this.current = current
+            }
+            ArchiveAction.START -> {
+                visibility = VISIBLE
+                total = event.total
+            }
+            ArchiveAction.DONE -> {
+                visibility = GONE
+            }
+            else -> i("Ignoring event $event")
+        }
     }
 
     private fun checkDone() {
