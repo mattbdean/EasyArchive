@@ -68,13 +68,13 @@ class ProgressIndicatorView : RelativeLayout {
      */
     fun postUpdate(event: ArchiveEvent) {
         when (event.action) {
-            ArchiveAction.INFLATE -> {
-                filename.text = event.file.absolutePath
-                this.current = current
-            }
             ArchiveAction.START -> {
                 visibility = VISIBLE
                 total = event.total
+            }
+            ArchiveAction.INFLATE -> {
+                filename.text = event.file.absolutePath
+                this.current = current
             }
             ArchiveAction.DONE -> {
                 visibility = GONE
