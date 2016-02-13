@@ -6,11 +6,8 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
-import android.view.View
 import android.widget.Button
 import com.pawegio.kandroid.find
-import com.pawegio.kandroid.v
-import net.dean.easyarchive.library.ArchiveAction
 import net.dean.easyarchive.library.ArchiveEvent
 import net.dean.easyarchive.library.ArchiveEventHandler
 import net.dean.easyarchive.library.InflaterAggregation

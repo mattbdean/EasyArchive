@@ -33,11 +33,11 @@ class ProgressIndicatorView : RelativeLayout {
             checkDone()
         }
 
-    private var done = false
+    private var finished = false
         set(value) {
             field = value
             // Hide filename when done
-            filename.visibility = if (done) GONE else VISIBLE
+            filename.visibility = if (finished) GONE else VISIBLE
         }
     private val progressBar: ProgressBar by lazy { find<ProgressBar>(R.id.progress_bar) }
     private val filename: TextView by lazy { find<TextView>(R.id.filename) }
@@ -68,15 +68,23 @@ class ProgressIndicatorView : RelativeLayout {
      */
     fun postUpdate(event: ArchiveEvent) {
         when (event.action) {
-            ArchiveAction.START -> {
+            ArchiveAction.COUNT -> {
+                filename.setText(R.string.preparing)
+                fileCounter.text = ""
+                finished = false
                 visibility = VISIBLE
+                progressBar.isIndeterminate = true
+            }
+            ArchiveAction.START -> {
                 total = event.total
+                progressBar.isIndeterminate = false
             }
             ArchiveAction.INFLATE -> {
                 filename.text = event.file.absolutePath
-                this.current = current
+                this.current = event.current
             }
             ArchiveAction.DONE -> {
+                finished = true
                 visibility = GONE
             }
             else -> i("Ignoring event $event")
@@ -84,8 +92,8 @@ class ProgressIndicatorView : RelativeLayout {
     }
 
     private fun checkDone() {
-        done = current == total
-        if (done)
+        finished = current == total
+        if (finished)
             fileCounter.setText(R.string.done)
         else
             fileCounter.text = "$current/$total"

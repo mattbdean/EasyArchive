@@ -39,7 +39,7 @@ class DefaultArchiveEventHandler : ArchiveEventHandler {
 
 /** An enumeration of possible actions to be used in [ArchiveEvent] */
 enum class ArchiveAction {
-    /** Represents when an Inflator has started to operate */
+    /** Represents when an Inflator has started to operate. Sent after COUNT. */
     START,
     /** Represents when a file has been inflated */
     INFLATE,
