@@ -83,7 +83,6 @@ class ProgressIndicatorView : RelativeLayout {
                 dir = event.file
             }
             ArchiveAction.INFLATE -> {
-                val path = pathFor(event.file)
                 filename.text = pathFor(event.file)
                 this.current = event.current
             }
